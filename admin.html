@@ -167,6 +167,31 @@
 
     .char-count { text-align: right; font-size: 0.72rem; color: var(--text-muted); margin-top: 4px; }
 
+    /* ── Section row (label + clear button) ──────────────────── */
+    .section-row {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .section-row .section-label { margin-bottom: 0; }
+
+    #btn-clear-all {
+      background: none;
+      border: 1.5px solid #E8B4B0;
+      border-radius: 20px;
+      color: var(--danger);
+      font-family: 'Hind Vadodara', sans-serif;
+      font-size: 0.78rem; font-weight: 600;
+      padding: 4px 12px;
+      cursor: pointer;
+      display: flex; align-items: center; gap: 5px;
+      transition: background .2s, border-color .2s;
+      touch-action: manipulation;
+    }
+    #btn-clear-all:hover, #btn-clear-all:active {
+      background: #FDECEA; border-color: var(--danger);
+    }
+
     /* ── Add button ──────────────────────────────────────────── */
     #btn-add-point {
       width: 100%; padding: 14px;
@@ -284,7 +309,10 @@
       WhatsApp / Google Docs થી Copy-Paste સીધું કામ કરે છે. ✅
     </div>
 
-    <div class="section-label">સૂચના મુદ્દાઓ</div>
+    <div class="section-row">
+      <span class="section-label">સૂચના મુદ્દાઓ</span>
+      <button id="btn-clear-all" onclick="clearAll()">🗑 બધું Clear</button>
+    </div>
 
     <div id="points-container">
       <div id="empty-hint">
@@ -398,6 +426,18 @@
     window.updateCharCount = function(ta) {
       ta.closest(".point-card").querySelector(".char-count").textContent =
         `${ta.value.length} અક્ષર`;
+    };
+
+    // ── Clear all notices ─────────────────────────────────────
+    window.clearAll = function() {
+      const count = container.querySelectorAll(".point-card").length;
+      if (count === 0) { showToast("⚠️ કોઈ સૂચના નથી", "error"); return; }
+      if (!confirm(`બધી ${count} સૂચનાઓ Clear કરવી છે?`)) return;
+      container.querySelectorAll(".point-card").forEach(c => c.remove());
+      pointCount = 0;
+      emptyHint.style.display = "";
+      showToast("🗑 બધી સૂચનાઓ Clear થઈ", "info");
+      setStatus("ready", "Ready — નવી Notices ઉમેરો");
     };
 
     // ── Collect non-empty points ──────────────────────────────
