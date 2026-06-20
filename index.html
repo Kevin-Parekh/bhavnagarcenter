@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="gu" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#FF9933" />
+  <title>ભાવનગર કેન્દ્ર — સૂચનાઓ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Vadodara:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+
+    :root {
+      --saffron:      #FF9933;
+      --saffron-dark: #C97A00;
+      --saffron-glow: rgba(255,153,51,.18);
+      --cream:        #FDFBF7;
+      --cream-dark:   #F5F0E8;
+      --text:         #1C0A00;
+      --text-muted:   #7A5C3A;
+      --border:       rgba(255,153,51,.25);
+    }
+
+    body {
+      font-family: 'Hind Vadodara', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      background-image:
+        radial-gradient(ellipse at 15% 15%, rgba(255,180,50,.07) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 85%, rgba(255,130,30,.05) 0%, transparent 55%);
+    }
+
+    /* ── Header ─────────────────────────────────────────────── */
+    header {
+      flex-shrink: 0;
+      background: linear-gradient(135deg, #FF9933 0%, #FFAA44 50%, #FF8800 100%);
+      padding: 14px 50px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+      box-shadow: 0 4px 24px rgba(200,90,0,.22);
+    }
+    header::before, header::after {
+      content: "❋"; position: absolute; top: 50%; transform: translateY(-50%);
+      color: rgba(255,255,255,.38); font-size: 1.6rem;
+    }
+    header::before { left: 18px; }
+    header::after  { right: 18px; }
+    header h1 {
+      font-size: clamp(1.4rem, 3.5vw, 2.4rem);
+      font-weight: 700; color: #fff;
+      text-shadow: 0 2px 8px rgba(0,0,0,.18);
+      letter-spacing: .02em; line-height: 1.2; text-align: center;
+    }
+    header .sub {
+      font-size: clamp(0.78rem, 1.8vw, 1.05rem);
+      color: rgba(255,255,255,.80); margin-top: 2px;
+      font-weight: 500; text-align: center;
+    }
+    .header-rule {
+      height: 4px; flex-shrink: 0;
+      background: linear-gradient(90deg, transparent, var(--saffron), transparent);
+    }
+
+    /* ── Backup mode banner ──────────────────────────────────── */
+    #backup-banner {
+      display: none; flex-shrink: 0;
+      background: #FFF8E1; border-bottom: 2px solid #FFCA28;
+      padding: 8px 20px; font-size: 0.84rem;
+      color: #5D3A00; text-align: center; font-weight: 500;
+    }
+    #backup-banner.visible { display: block; }
+
+    /* ── Stage ───────────────────────────────────────────────── */
+    #stage {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 24px 64px; position: relative; overflow: hidden;
+    }
+
+    /* ── Slide card ──────────────────────────────────────────── */
+    #slide-card {
+      width: 100%; max-width: 1100px;
+      background: #fff; border: 2px solid var(--border);
+      border-radius: 20px;
+      padding: clamp(28px, 4vw, 58px) clamp(28px, 5vw, 80px);
+      box-shadow: 0 8px 40px rgba(200,100,0,.07), 0 0 0 1px rgba(255,153,51,.08) inset;
+      position: relative;
+    }
+    #slide-card::before {
+      content: ""; position: absolute; left: 0; top: 10%; bottom: 10%;
+      width: 5px; background: linear-gradient(to bottom, var(--saffron), #FFD580);
+      border-radius: 0 4px 4px 0;
+    }
+
+    /* ── Points ──────────────────────────────────────────────── */
+    .slide-points { list-style: none; display: flex; flex-direction: column; gap: clamp(20px, 3vw, 38px); }
+    .slide-point  { display: flex; align-items: flex-start; gap: clamp(14px, 2.5vw, 28px); animation: fadeUp .35s ease both; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:none} }
+
+    .point-badge {
+      flex-shrink: 0;
+      width: clamp(36px, 4vw, 54px); height: clamp(36px, 4vw, 54px);
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--saffron) 0%, #FFD060 100%);
+      color: #fff; font-size: clamp(1rem, 1.8vw, 1.5rem); font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 3px 10px rgba(255,153,51,.35); margin-top: 4px;
+    }
+    .point-text {
+      font-size: clamp(1.5rem, 3vw, 2.5rem);
+      font-weight: 500; line-height: 1.65; color: var(--text); letter-spacing: .01em;
+    }
+
+    /* ── State messages (loading / empty) ────────────────────── */
+    .state-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; }
+    .state-icon  { font-size: clamp(2.4rem, 5vw, 3.8rem); opacity: .55; }
+    .state-label { font-size: clamp(1.05rem, 2.3vw, 1.75rem); font-weight: 500; color: var(--text-muted); line-height: 1.6; }
+    .spinner {
+      width: 48px; height: 48px;
+      border: 5px solid var(--border); border-top-color: var(--saffron);
+      border-radius: 50%; animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Nav arrows ──────────────────────────────────────────── */
+    .nav-arrow {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      width: clamp(44px, 5vw, 64px); height: clamp(44px, 5vw, 64px);
+      border-radius: 50%;
+      background: rgba(255,255,255,.72); backdrop-filter: blur(6px);
+      border: 2px solid var(--border); color: var(--saffron-dark);
+      font-size: clamp(1.2rem, 2.5vw, 1.8rem); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .2s, transform .15s, opacity .2s;
+      box-shadow: 0 4px 16px rgba(0,0,0,.09); z-index: 10;
+    }
+    .nav-arrow:hover  { background: var(--cream-dark); transform: translateY(-50%) scale(1.08); }
+    .nav-arrow:active { transform: translateY(-50%) scale(.94); }
+    .nav-arrow:disabled { opacity: .22; cursor: default; pointer-events: none; }
+    #btn-prev { left: 10px; }
+    #btn-next { right: 10px; }
+
+    /* ── Footer: counter + dots ──────────────────────────────── */
+    #slide-footer {
+      flex-shrink: 0; display: flex; align-items: center;
+      justify-content: center; gap: 14px; padding: 10px 20px 12px;
+    }
+    #slide-counter { font-size: clamp(0.82rem, 1.5vw, 1.05rem); color: var(--text-muted); font-weight: 500; min-width: 72px; text-align: center; }
+    #dots-container { display: flex; gap: 8px; align-items: center; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); transition: background .25s, transform .25s; cursor: pointer; }
+    .dot.active { background: var(--saffron); transform: scale(1.4); }
+
+    /* ── Keyboard hint ───────────────────────────────────────── */
+    #kb-hint {
+      flex-shrink: 0; text-align: center;
+      padding: 5px 20px 10px;
+      font-size: clamp(0.70rem, 1.2vw, 0.85rem); color: var(--text-muted);
+    }
+
+    /* ── Slide transition classes ────────────────────────────── */
+    #slide-card.exit-l  { animation: exL .20s ease forwards; }
+    #slide-card.exit-r  { animation: exR .20s ease forwards; }
+    #slide-card.enter-l { animation: enL .28s ease both; }
+    #slide-card.enter-r { animation: enR .28s ease both; }
+    @keyframes exL { to{opacity:0;transform:translateX(-36px)} }
+    @keyframes exR { to{opacity:0;transform:translateX(36px)} }
+    @keyframes enL { from{opacity:0;transform:translateX(36px)}  to{opacity:1;transform:none} }
+    @keyframes enR { from{opacity:0;transform:translateX(-36px)} to{opacity:1;transform:none} }
+
+    /* ── Last-updated chip ───────────────────────────────────── */
+    #updated-chip {
+      position: fixed; bottom: 52px; right: 14px;
+      background: rgba(255,255,255,.80); backdrop-filter: blur(4px);
+      border: 1px solid var(--border); border-radius: 20px;
+      padding: 4px 12px; font-size: 0.72rem; color: var(--text-muted);
+      opacity: 0; transition: opacity .4s;
+    }
+    #updated-chip.show { opacity: 1; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div>
+      <h1>ભાવનગર કેન્દ્રની માહિતી</h1>
+      <p class="sub">Bhavnagar Center — Session Notices</p>
+    </div>
+  </header>
+  <div class="header-rule"></div>
+
+  <div id="backup-banner">
+    ⚠️ Offline Backup Mode — Admin ની backup link વડે Load થઈ.
+  </div>
+
+  <!-- Stage -->
+  <div id="stage">
+    <button class="nav-arrow" id="btn-prev" onclick="navigate(-1)" aria-label="Previous" disabled>&#8592;</button>
+
+    <div id="slide-card">
+      <div class="state-wrap">
+        <div class="spinner"></div>
+        <p class="state-label">સૂચનાઓ Load થઈ રહ્યી છે…</p>
+      </div>
+    </div>
+
+    <button class="nav-arrow" id="btn-next" onclick="navigate(1)" aria-label="Next" disabled>&#8594;</button>
+  </div>
+
+  <div id="slide-footer">
+    <span id="slide-counter"></span>
+    <div id="dots-container"></div>
+  </div>
+  <div id="kb-hint">⬅ ➡ Arrow Keys &nbsp;|&nbsp; Click Arrows to navigate</div>
+
+  <!-- Updated timestamp chip -->
+  <div id="updated-chip"></div>
+
+  <script type="module">
+    import { JSONBIN_API_KEY, JSONBIN_BIN_ID } from "./config.js";
+
+    // ── Config ────────────────────────────────────────────────
+    const BASE       = "https://api.jsonbin.io/v3/b";
+    const POLL_MS    = 4000;   // poll every 4 seconds
+    // Bin ID: from config.js, OR URL param ?bin=XXX, OR localStorage (for same device)
+    const params     = new URLSearchParams(window.location.search);
+    let   binId      = JSONBIN_BIN_ID || params.get("bin") || localStorage.getItem("satsang_bin_id") || "";
+
+    // ── State ─────────────────────────────────────────────────
+    let slides        = [];
+    let currentSlide  = 0;
+    let lastUpdatedAt = 0;
+
+    // ── DOM refs ──────────────────────────────────────────────
+    const slideCard    = document.getElementById("slide-card");
+    const btnPrev      = document.getElementById("btn-prev");
+    const btnNext      = document.getElementById("btn-next");
+    const slideCounter = document.getElementById("slide-counter");
+    const dotsWrap     = document.getElementById("dots-container");
+    const backupBanner = document.getElementById("backup-banner");
+    const updatedChip  = document.getElementById("updated-chip");
+
+    // ── Points-per-slide logic ────────────────────────────────
+    const LONG = 80;
+    function buildSlides(pts) {
+      const out = []; let i = 0;
+      while (i < pts.length) {
+        const p = pts[i];
+        if (p.length > LONG) { out.push([p]); i++; }
+        else if (i + 1 < pts.length && pts[i+1].length <= LONG) { out.push([p, pts[i+1]]); i += 2; }
+        else { out.push([p]); i++; }
+      }
+      return out;
+    }
+
+    // ── Render ────────────────────────────────────────────────
+    function renderSlide(dir = null) {
+      if (dir !== null) {
+        const ex = dir > 0 ? "exit-l" : "exit-r";
+        const en = dir > 0 ? "enter-l" : "enter-r";
+        slideCard.classList.add(ex);
+        setTimeout(() => { slideCard.classList.remove(ex); paint(en); }, 200);
+      } else {
+        paint(null);
+      }
+      updateNav();
+    }
+
+    function paint(enterCls) {
+      const pts = slides[currentSlide];
+      let globalIdx = 0;
+      for (let s = 0; s < currentSlide; s++) globalIdx += slides[s].length;
+
+      const ul = document.createElement("ul");
+      ul.className = "slide-points";
+      pts.forEach((text, i) => {
+        const li = document.createElement("li");
+        li.className = "slide-point";
+        li.style.animationDelay = `${i * 55}ms`;
+        li.innerHTML = `
+          <span class="point-badge">${globalIdx + i + 1}</span>
+          <span class="point-text">${esc(text)}</span>
+        `;
+        ul.appendChild(li);
+      });
+
+      slideCard.innerHTML = "";
+      slideCard.appendChild(ul);
+      if (enterCls) {
+        slideCard.classList.add(enterCls);
+        setTimeout(() => slideCard.classList.remove(enterCls), 350);
+      }
+    }
+
+    function updateNav() {
+      btnPrev.disabled = currentSlide === 0;
+      btnNext.disabled = currentSlide === slides.length - 1;
+      slideCounter.textContent = slides.length ? `${currentSlide + 1} / ${slides.length}` : "";
+      dotsWrap.innerHTML = "";
+      slides.forEach((_, i) => {
+        const d = document.createElement("span");
+        d.className = "dot" + (i === currentSlide ? " active" : "");
+        d.onclick = () => goTo(i);
+        dotsWrap.appendChild(d);
+      });
+    }
+
+    // ── Navigation ────────────────────────────────────────────
+    window.navigate = function(delta) {
+      const n = currentSlide + delta;
+      if (n < 0 || n >= slides.length) return;
+      currentSlide = n;
+      renderSlide(delta);
+    };
+
+    function goTo(idx) {
+      if (idx === currentSlide) return;
+      const dir = idx > currentSlide ? 1 : -1;
+      currentSlide = idx;
+      renderSlide(dir);
+    }
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") navigate(1);
+      if (e.key === "ArrowLeft"  || e.key === "ArrowUp")   navigate(-1);
+    });
+
+    // ── Show state (loading / error / empty) ──────────────────
+    function showState(icon, msg) {
+      slideCard.innerHTML = `<div class="state-wrap"><span class="state-icon">${icon}</span><p class="state-label">${msg}</p></div>`;
+      btnPrev.disabled = btnNext.disabled = true;
+      slideCounter.textContent = "";
+      dotsWrap.innerHTML = "";
+    }
+
+    function showLoading() {
+      slideCard.innerHTML = `<div class="state-wrap"><div class="spinner"></div><p class="state-label">સૂચનાઓ Load થઈ રહ્યી છે…</p></div>`;
+    }
+
+    // ── Load points into slideshow ────────────────────────────
+    function loadPoints(pts, updatedAt) {
+      const filtered = pts.map(p => String(p).trim()).filter(Boolean);
+      if (!filtered.length) { showState("📭", "Admin હજી સૂચનાઓ Submit કરી નથી."); return; }
+      const wasEmpty = slides.length === 0;
+      slides = buildSlides(filtered);
+      if (wasEmpty) currentSlide = 0;
+      // If new data arrived and we were already showing, restart from slide 1
+      if (!wasEmpty) currentSlide = 0;
+      renderSlide(null);
+
+      // Show last-updated chip
+      if (updatedAt) {
+        const t = new Date(updatedAt).toLocaleTimeString("gu-IN");
+        updatedChip.textContent = `Updated: ${t}`;
+        updatedChip.classList.add("show");
+        setTimeout(() => updatedChip.classList.remove("show"), 3500);
+      }
+    }
+
+    // ── Escape helper ─────────────────────────────────────────
+    function esc(s) {
+      return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    }
+
+    // ── Backup URL mode ───────────────────────────────────────
+    function tryBackup() {
+      if (params.get("backup") !== "1") return false;
+      try {
+        const pts = JSON.parse(params.get("data") || "[]");
+        if (!Array.isArray(pts) || !pts.length) return false;
+        backupBanner.classList.add("visible");
+        loadPoints(pts, null);
+        return true;
+      } catch { return false; }
+    }
+
+    // ── JSONBin polling ───────────────────────────────────────
+    async function poll() {
+      if (!binId) {
+        showState("⚙️", "config.js માં JSONBIN_BIN_ID paste કરો,\nઅથવા Admin ની share URL ખોલો.");
+        return;
+      }
+      try {
+        const res  = await fetch(`${BASE}/${binId}/latest`, {
+          headers: { "X-Master-Key": JSONBIN_API_KEY }
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        const data = json.record;
+
+        // Only re-render if data has actually changed
+        if (data.updatedAt !== lastUpdatedAt) {
+          lastUpdatedAt = data.updatedAt;
+          loadPoints(data.points || [], data.updatedAt);
+        }
+      } catch (err) {
+        console.warn("Poll error:", err);
+        if (slides.length === 0) showState("⚠️", "Load Error — Internet ચેક કરો.");
+      }
+    }
+
+    // ── Start ─────────────────────────────────────────────────
+    if (!tryBackup()) {
+      showLoading();
+      poll();                          // immediate first fetch
+      setInterval(poll, POLL_MS);      // then every 4 seconds
+    }
+  </script>
+
+</body>
+</html>

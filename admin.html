@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="gu" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="theme-color" content="#FF9933" />
+  <title>સૂચના Admin — ભાવનગર કેન્દ્ર</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Vadodara:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --saffron:       #FF9933;
+      --saffron-dark:  #C97A00;
+      --saffron-light: #FFF3E0;
+      --cream:         #FDFBF7;
+      --text:          #2C1810;
+      --text-muted:    #7A6050;
+      --border:        #E8D5B0;
+      --danger:        #C0392B;
+      --success:       #27AE60;
+      --radius:        12px;
+    }
+
+    html { font-size: 18px; }
+
+    body {
+      font-family: 'Hind Vadodara', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 130px;
+    }
+
+    /* ── Header ─────────────────────────────────────────────── */
+    header {
+      background: linear-gradient(135deg, #FF9933 0%, #FFA940 100%);
+      color: #fff;
+      padding: 18px 16px 14px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 2px 10px rgba(0,0,0,.20);
+    }
+    header h1 { font-size: 1.35rem; font-weight: 700; line-height: 1.3; }
+    header p  { font-size: 0.82rem; opacity: .85; margin-top: 2px; }
+
+    /* ── Status pill ─────────────────────────────────────────── */
+    #status-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 16px;
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.80rem;
+      color: var(--text-muted);
+      min-height: 42px;
+    }
+    #status-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      flex-shrink: 0; background: #ccc; transition: background .3s;
+    }
+    #status-dot.ok     { background: var(--success); }
+    #status-dot.error  { background: var(--danger); }
+    #status-dot.busy   { background: var(--saffron); animation: pulse 1s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.35} }
+
+    /* ── Bin ID setup banner ─────────────────────────────────── */
+    #bin-banner {
+      display: none;
+      background: #E8F8EF;
+      border: 1.5px solid #A8DFC0;
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      margin: 14px 16px 0;
+      font-size: 0.85rem;
+      line-height: 1.7;
+      color: #1A5C35;
+    }
+    #bin-banner.visible { display: block; }
+    #bin-banner strong { display: block; font-size: 0.95rem; margin-bottom: 4px; }
+    #bin-id-display {
+      font-family: monospace;
+      font-size: 0.88rem;
+      background: #fff;
+      border: 1px solid #A8DFC0;
+      border-radius: 6px;
+      padding: 6px 10px;
+      margin: 6px 0;
+      word-break: break-all;
+      display: block;
+    }
+    .btn-copy-bin {
+      background: var(--success);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-family: 'Hind Vadodara', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+
+    /* ── Main area ───────────────────────────────────────────── */
+    main { padding: 14px 16px; max-width: 640px; margin: 0 auto; }
+
+    /* ── Gujarati tip ────────────────────────────────────────── */
+    .keyboard-hint {
+      background: var(--saffron-light);
+      border: 1px solid #FFD49A;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.80rem;
+      color: var(--saffron-dark);
+      margin-bottom: 14px;
+      line-height: 1.65;
+    }
+    .keyboard-hint strong { display: block; margin-bottom: 2px; }
+
+    .section-label {
+      font-size: 0.78rem; font-weight: 600; letter-spacing: .06em;
+      text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px;
+    }
+
+    /* ── Point card ──────────────────────────────────────────── */
+    .point-card {
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 10px rgba(44,24,16,.07);
+      transition: border-color .2s;
+    }
+    .point-card:focus-within {
+      border-color: var(--saffron);
+      box-shadow: 0 0 0 3px rgba(255,153,51,.15);
+    }
+    .point-card-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 8px;
+    }
+    .point-number {
+      font-size: 0.80rem; font-weight: 600; color: var(--saffron-dark);
+      background: var(--saffron-light); border-radius: 20px; padding: 2px 10px;
+    }
+    .btn-remove {
+      background: none; border: none; cursor: pointer; color: var(--text-muted);
+      font-size: 1.35rem; line-height: 1; padding: 4px 8px; border-radius: 6px;
+      transition: color .2s, background .2s; touch-action: manipulation;
+    }
+    .btn-remove:hover, .btn-remove:active { color: var(--danger); background: #FDECEA; }
+
+    textarea.point-input {
+      width: 100%; min-height: 88px; border: none; outline: none;
+      resize: vertical; font-family: 'Hind Vadodara', sans-serif;
+      font-size: 1.1rem; line-height: 1.7; color: var(--text);
+      background: transparent; caret-color: var(--saffron);
+    }
+    textarea.point-input::placeholder { color: #C0A88A; }
+
+    .char-count { text-align: right; font-size: 0.72rem; color: var(--text-muted); margin-top: 4px; }
+
+    /* ── Add button ──────────────────────────────────────────── */
+    #btn-add-point {
+      width: 100%; padding: 14px;
+      background: #fff; border: 2px dashed var(--saffron);
+      border-radius: var(--radius);
+      font-family: 'Hind Vadodara', sans-serif; font-size: 1rem; font-weight: 600;
+      color: var(--saffron-dark); cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: background .2s, transform .1s; touch-action: manipulation;
+      margin-bottom: 24px;
+    }
+    #btn-add-point:hover, #btn-add-point:active { background: var(--saffron-light); }
+
+    /* ── Fixed action bar ────────────────────────────────────── */
+    #action-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: #fff; border-top: 1.5px solid var(--border);
+      padding: 10px 16px; display: flex; gap: 10px;
+      z-index: 100; box-shadow: 0 -4px 16px rgba(0,0,0,.08);
+    }
+    .btn-primary, .btn-secondary {
+      flex: 1; padding: 14px 8px; border: none; border-radius: var(--radius);
+      font-family: 'Hind Vadodara', sans-serif; font-size: 1rem; font-weight: 700;
+      cursor: pointer; transition: opacity .2s, transform .1s; touch-action: manipulation;
+    }
+    .btn-primary:active, .btn-secondary:active { transform: scale(.97); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--saffron) 0%, #FFA940 100%);
+      color: #fff; box-shadow: 0 4px 14px rgba(255,153,51,.35);
+    }
+    .btn-primary:disabled { opacity: .50; cursor: not-allowed; }
+    .btn-secondary {
+      background: var(--saffron-light); color: var(--saffron-dark);
+      border: 1.5px solid var(--border);
+    }
+
+    /* ── Toast ───────────────────────────────────────────────── */
+    #toast {
+      position: fixed; top: 76px; left: 50%;
+      transform: translateX(-50%) translateY(-16px);
+      background: #333; color: #fff; padding: 11px 22px;
+      border-radius: 30px; font-size: 0.88rem; font-weight: 500;
+      opacity: 0; pointer-events: none;
+      transition: opacity .3s, transform .3s; z-index: 200;
+      white-space: nowrap; max-width: 92vw; text-align: center;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    #toast.success { background: var(--success); }
+    #toast.error   { background: var(--danger); }
+    #toast.info    { background: var(--saffron-dark); }
+
+    /* ── Backup modal ────────────────────────────────────────── */
+    #modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.50); z-index: 300;
+      align-items: flex-end; justify-content: center;
+    }
+    #modal-overlay.open { display: flex; }
+    #modal-box {
+      background: #fff; border-radius: 20px 20px 0 0;
+      padding: 22px 18px 34px; width: 100%;
+      max-width: 640px; max-height: 80vh; overflow-y: auto;
+    }
+    #modal-box h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+    #modal-box p  { font-size: 0.83rem; color: var(--text-muted); margin-bottom: 12px; line-height: 1.6; }
+    #backup-link {
+      width: 100%; padding: 12px; border: 1.5px solid var(--border);
+      border-radius: 8px; font-size: 0.76rem; color: var(--text-muted);
+      word-break: break-all; background: var(--saffron-light);
+      min-height: 80px; resize: none; font-family: monospace; margin-bottom: 12px;
+    }
+    .modal-actions { display: flex; gap: 10px; }
+    .btn-copy, .btn-share, .btn-close-modal {
+      flex: 1; padding: 12px; border-radius: 10px; border: none;
+      font-family: 'Hind Vadodara', sans-serif; font-size: 0.90rem;
+      font-weight: 600; cursor: pointer; touch-action: manipulation;
+    }
+    .btn-copy  { background: var(--saffron); color: #fff; }
+    .btn-share { background: #25D366; color: #fff; }
+    .btn-close-modal { background: var(--saffron-light); color: var(--text); }
+
+    /* ── Empty state ─────────────────────────────────────────── */
+    #empty-hint {
+      text-align: center; padding: 36px 20px;
+      color: var(--text-muted); font-size: 0.88rem; line-height: 1.8;
+    }
+    #empty-hint .icon { font-size: 2.4rem; display: block; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>📋 સૂચના Admin</h1>
+    <p>ભાવનગર કેન્દ્ર — Notice Writer</p>
+  </header>
+
+  <div id="status-bar">
+    <span id="status-dot" class="busy"></span>
+    <span id="status-text">Ready…</span>
+  </div>
+
+  <!-- Shown after first Submit to tell admin their Bin ID -->
+  <div id="bin-banner">
+    <strong>✅ પ્રથમ Bin બની ગઈ! — One-time setup</strong>
+    નીચેનો <b>Bin ID</b> copy કરી <code>config.js</code> ની <code>JSONBIN_BIN_ID</code> ફીલ્ડ માં paste કરો
+    (ફક્ત એક જ વાર — પછી આ message ફરી નહિ આવે):
+    <code id="bin-id-display"></code>
+    <button class="btn-copy-bin" onclick="copyBinId()">📋 Bin ID Copy કરો</button>
+  </div>
+
+  <main>
+    <div class="keyboard-hint">
+      <strong>💡 ગુજરાતી ટાઇપિંગ ટિપ્સ</strong>
+      Android: Gboard → Globe icon → ગુજરાતી પસંદ કરો.<br>
+      WhatsApp / Google Docs થી Copy-Paste સીધું કામ કરે છે. ✅
+    </div>
+
+    <div class="section-label">સૂચના મુદ્દાઓ</div>
+
+    <div id="points-container">
+      <div id="empty-hint">
+        <span class="icon">✍️</span>
+        નીચેના બટન પર ક્લિક કરી<br>પ્રથમ સૂચના ઉમેરો.
+      </div>
+    </div>
+
+    <button id="btn-add-point" onclick="addPoint()">
+      <span style="font-size:1.3rem">＋</span> સૂચના ઉમેરો
+    </button>
+  </main>
+
+  <div id="action-bar">
+    <button class="btn-secondary" onclick="openBackupModal()">🔗 Backup Link</button>
+    <button class="btn-primary" id="btn-submit" onclick="submitNotices()">
+      ✅ Submit Notices
+    </button>
+  </div>
+
+  <!-- Backup URL modal -->
+  <div id="modal-overlay" onclick="closeModalIfOutside(event)">
+    <div id="modal-box">
+      <h2>🔗 Offline Backup Link</h2>
+      <p>
+        JSONBin / Internet ઉપલબ્ધ ન હોય ત્યારે વાપરો.<br>
+        આ link WhatsApp પર Presenter ને મોકલો — browser માં ખોલ્યા પછી slides offline load થશે.
+      </p>
+      <textarea id="backup-link" readonly></textarea>
+      <div class="modal-actions">
+        <button class="btn-copy"  onclick="copyBackupLink()">📋 Copy</button>
+        <button class="btn-share" onclick="shareViaWhatsApp()">💬 WhatsApp</button>
+        <button class="btn-close-modal" onclick="closeModal()">બંધ</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <script type="module">
+    import { JSONBIN_API_KEY, JSONBIN_BIN_ID } from "./config.js";
+
+    // ── JSONBin endpoints ─────────────────────────────────────
+    const BASE      = "https://api.jsonbin.io/v3/b";
+    const KEY       = JSONBIN_API_KEY;
+    let   activeBinId = JSONBIN_BIN_ID || localStorage.getItem("satsang_bin_id") || "";
+
+    // ── DOM refs ──────────────────────────────────────────────
+    const container  = document.getElementById("points-container");
+    const emptyHint  = document.getElementById("empty-hint");
+    const btnSubmit  = document.getElementById("btn-submit");
+    const statusDot  = document.getElementById("status-dot");
+    const statusText = document.getElementById("status-text");
+    const binBanner  = document.getElementById("bin-banner");
+    const binDisplay = document.getElementById("bin-id-display");
+
+    setStatus("ready", "Ready — Notices ઉમેરો અને Submit કરો");
+
+    // ── Status helper ─────────────────────────────────────────
+    function setStatus(type, msg) {
+      statusDot.className = type === "ok" ? "ok" : type === "error" ? "error" : "busy";
+      statusText.textContent = msg;
+    }
+
+    // ── Point management ──────────────────────────────────────
+    let pointCount = 0;
+
+    window.addPoint = function(value = "") {
+      emptyHint.style.display = "none";
+      pointCount++;
+      const idx = pointCount;
+
+      const card = document.createElement("div");
+      card.className = "point-card";
+      card.innerHTML = `
+        <div class="point-card-header">
+          <span class="point-number">મુદ્દો ${idx}</span>
+          <button class="btn-remove" onclick="removePoint(this)" aria-label="Remove">✕</button>
+        </div>
+        <textarea
+          class="point-input"
+          placeholder="અહીં ગુજરાતીમાં સૂચના લખો…"
+          rows="3"
+          oninput="updateCharCount(this)"
+          autocomplete="off" autocorrect="off" spellcheck="false"
+        >${escHtml(value)}</textarea>
+        <div class="char-count">0 અક્ષર</div>
+      `;
+      container.appendChild(card);
+
+      const ta = card.querySelector("textarea");
+      ta.focus();
+      updateCharCount(ta);
+    };
+
+    window.removePoint = function(btn) {
+      btn.closest(".point-card").remove();
+      renumber();
+      if (!container.querySelector(".point-card")) {
+        emptyHint.style.display = "";
+        pointCount = 0;
+      }
+    };
+
+    function renumber() {
+      container.querySelectorAll(".point-card").forEach((c, i) => {
+        c.querySelector(".point-number").textContent = `મુદ્દો ${i + 1}`;
+      });
+    }
+
+    window.updateCharCount = function(ta) {
+      ta.closest(".point-card").querySelector(".char-count").textContent =
+        `${ta.value.length} અક્ષર`;
+    };
+
+    // ── Collect non-empty points ──────────────────────────────
+    function getPoints() {
+      return Array.from(container.querySelectorAll("textarea.point-input"))
+        .map(t => t.value.trim()).filter(Boolean);
+    }
+
+    // ── Submit to JSONBin ─────────────────────────────────────
+    window.submitNotices = async function() {
+      const points = getPoints();
+      if (points.length === 0) {
+        showToast("⚠️ કોઈ સૂચના નથી — ઉમેરો!", "error"); return;
+      }
+      if (!KEY || KEY.startsWith("PASTE")) {
+        showToast("⚠️ config.js માં API Key paste કરો!", "error"); return;
+      }
+
+      btnSubmit.disabled = true;
+      btnSubmit.textContent = "Saving…";
+      setStatus("busy", "JSONBin પર Save થઈ રહ્યું છે…");
+
+      const payload = { points, updatedAt: Date.now() };
+
+      try {
+        let res, data;
+
+        if (activeBinId) {
+          // Update existing bin
+          res  = await fetch(`${BASE}/${activeBinId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json", "X-Master-Key": KEY },
+            body: JSON.stringify(payload),
+          });
+        } else {
+          // Create new bin on first use
+          res = await fetch(BASE, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Master-Key": KEY,
+              "X-Bin-Name": "bhavnagar-satsang-notices",
+              "X-Bin-Private": "false",   // public so presenter can read without key
+            },
+            body: JSON.stringify(payload),
+          });
+        }
+
+        if (!res.ok) {
+          const err = await res.text();
+          throw new Error(`HTTP ${res.status}: ${err}`);
+        }
+
+        data = await res.json();
+
+        // On first create, persist the Bin ID
+        if (!activeBinId) {
+          activeBinId = data.metadata.id;
+          localStorage.setItem("satsang_bin_id", activeBinId);
+          // Show the one-time setup banner
+          binDisplay.textContent = activeBinId;
+          binBanner.classList.add("visible");
+        }
+
+        setStatus("ok", `✓ Submitted — ${new Date().toLocaleTimeString("gu-IN")}`);
+        showToast("✅ સૂચનાઓ Successfully Submit થઈ!", "success");
+
+      } catch (err) {
+        console.error(err);
+        setStatus("error", "Error — Backup Link વાપરો");
+        showToast(`❌ ${err.message.slice(0, 60)}`, "error");
+      } finally {
+        btnSubmit.disabled = false;
+        btnSubmit.textContent = "✅ Submit Notices";
+      }
+    };
+
+    // ── Copy Bin ID to clipboard ──────────────────────────────
+    window.copyBinId = function() {
+      navigator.clipboard.writeText(activeBinId).then(() => {
+        showToast("📋 Bin ID Copy થઈ!", "success");
+      });
+    };
+
+    // ── Backup URL modal ──────────────────────────────────────
+    window.openBackupModal = function() {
+      const points = getPoints();
+      if (points.length === 0) { showToast("⚠️ પ્રથમ સૂચના ઉમેરો", "error"); return; }
+
+      const base   = window.location.href.replace("admin.html", "index.html");
+      const params = new URLSearchParams({ backup: "1", data: JSON.stringify(points) });
+      document.getElementById("backup-link").value = `${base}?${params}`;
+      document.getElementById("modal-overlay").classList.add("open");
+    };
+
+    window.closeModal = function() {
+      document.getElementById("modal-overlay").classList.remove("open");
+    };
+    window.closeModalIfOutside = function(e) {
+      if (e.target.id === "modal-overlay") closeModal();
+    };
+    window.copyBackupLink = function() {
+      const v = document.getElementById("backup-link").value;
+      navigator.clipboard.writeText(v).then(() => showToast("📋 Link Copy થઈ!", "success"));
+    };
+    window.shareViaWhatsApp = function() {
+      const text = encodeURIComponent(
+        "ભાવનગર કેન્દ્ર — Backup Link:\n" + document.getElementById("backup-link").value
+      );
+      window.open(`https://wa.me/?text=${text}`, "_blank");
+    };
+
+    // ── Toast ─────────────────────────────────────────────────
+    let toastTimer;
+    window.showToast = function(msg, type = "info") {
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.className   = `show ${type}`;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => { t.className = ""; }, 3400);
+    };
+
+    function escHtml(s) {
+      return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+              .replace(/"/g,"&quot;");
+    }
+
+    // ── Start with one blank textarea ─────────────────────────
+    addPoint();
+  </script>
+
+</body>
+</html>
