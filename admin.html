@@ -525,8 +525,36 @@
               .replace(/"/g,"&quot;");
     }
 
-    // ── Start with one blank textarea ─────────────────────────
-    addPoint();
+    // ── On load: fetch existing notices so admin can edit them ──
+    (async function loadExisting() {
+      if (!activeBinId) {
+        // No bin yet — start blank
+        addPoint();
+        return;
+      }
+      setStatus("busy", "છેલ્લી સૂચનાઓ Load થઈ રહ્યી છે…");
+      try {
+        const res  = await fetch(`${BASE}/${activeBinId}/latest`, {
+          headers: { "X-Master-Key": KEY }
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        const pts  = json.record?.points || [];
+
+        if (pts.length > 0) {
+          pts.forEach(p => addPoint(p));
+          setStatus("ok", `✓ ${pts.length} સૂચનાઓ Load થઈ — Edit કરો અને Submit કરો`);
+          showToast(`📥 ${pts.length} સૂચનાઓ Load થઈ`, "info");
+        } else {
+          addPoint();
+          setStatus("ready", "Ready — Notices ઉમેરો અને Submit કરો");
+        }
+      } catch (err) {
+        console.warn("Load error:", err);
+        addPoint();
+        setStatus("error", "Load Error — નવેસરથી ટાઇપ કરો");
+      }
+    })();
   </script>
 
 </body>
