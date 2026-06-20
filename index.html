@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#FF9933" />
-  <title>ભાવનગર કેન્દ્ર — સૂચનાઓ</title>
+  <meta name="theme-color" content="#1565C0" />
+  <title>ભાવનગર ત્રિમંદિર — સૂચનાઓ</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Hind+Vadodara:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -13,13 +13,14 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --saffron:      #FF9933;
-      --saffron-dark: #C97A00;
-      --cream:        #FDFBF7;
-      --cream-dark:   #F5F0E8;
-      --text:         #1C0A00;
-      --text-muted:   #7A5C3A;
-      --border:       rgba(255,153,51,.25);
+      --blue:         #1565C0;
+      --blue-dark:    #003c8f;
+      --blue-mid:     #1976D2;
+      --cream:        #F5F8FF;
+      --cream-dark:   #E8EEFF;
+      --text:         #0A1628;
+      --text-muted:   #4A5A7A;
+      --border:       rgba(21,101,192,.22);
     }
 
     /* ── Base: mobile-first ──────────────────────────────────── */
@@ -32,18 +33,18 @@
       display: flex;
       flex-direction: column;
       background-image:
-        radial-gradient(ellipse at 15% 15%, rgba(255,180,50,.07) 0%, transparent 55%),
-        radial-gradient(ellipse at 85% 85%, rgba(255,130,30,.05) 0%, transparent 55%);
+        radial-gradient(ellipse at 15% 15%, rgba(21,101,192,.06) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 85%, rgba(25,118,210,.04) 0%, transparent 55%);
     }
 
     /* ── Header ─────────────────────────────────────────────── */
     header {
       flex-shrink: 0;
-      background: linear-gradient(135deg, #FF9933 0%, #FFAA44 50%, #FF8800 100%);
+      background: linear-gradient(135deg, #1565C0 0%, #1976D2 50%, #0D47A1 100%);
       padding: 12px 44px;
       display: flex; align-items: center; justify-content: center;
       position: relative;
-      box-shadow: 0 4px 24px rgba(200,90,0,.22);
+      box-shadow: 0 4px 24px rgba(13,60,143,.30);
     }
     header::before, header::after {
       content: "❋"; position: absolute; top: 50%; transform: translateY(-50%);
@@ -64,7 +65,7 @@
     }
     .header-rule {
       height: 3px; flex-shrink: 0;
-      background: linear-gradient(90deg, transparent, var(--saffron), transparent);
+      background: linear-gradient(90deg, transparent, var(--blue), transparent);
     }
 
     /* ── Backup banner ───────────────────────────────────────── */
@@ -98,13 +99,13 @@
       border-radius: 16px;
       /* Mobile: tighter padding */
       padding: 20px 18px;
-      box-shadow: 0 6px 30px rgba(200,100,0,.07), 0 0 0 1px rgba(255,153,51,.07) inset;
+      box-shadow: 0 6px 30px rgba(21,101,192,.07), 0 0 0 1px rgba(21,101,192,.07) inset;
       position: relative;
     }
     #slide-card::before {
       content: ""; position: absolute; left: 0; top: 10%; bottom: 10%;
       width: 4px;
-      background: linear-gradient(to bottom, var(--saffron), #FFD580);
+      background: linear-gradient(to bottom, var(--blue), #42A5F5);
       border-radius: 0 4px 4px 0;
     }
 
@@ -126,10 +127,10 @@
       /* Mobile: smaller badge */
       width: 34px; height: 34px;
       border-radius: 50%;
-      background: linear-gradient(135deg, var(--saffron) 0%, #FFD060 100%);
+      background: linear-gradient(135deg, var(--blue) 0%, #42A5F5 100%);
       color: #fff; font-size: 1rem; font-weight: 700;
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 3px 10px rgba(255,153,51,.35); margin-top: 3px;
+      box-shadow: 0 3px 10px rgba(21,101,192,.30); margin-top: 3px;
     }
     .point-text {
       /* Mobile: readable but compact */
@@ -150,7 +151,7 @@
     }
     .spinner {
       width: 44px; height: 44px;
-      border: 5px solid var(--border); border-top-color: var(--saffron);
+      border: 5px solid var(--border); border-top-color: var(--blue);
       border-radius: 50%; animation: spin 1s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
@@ -161,7 +162,7 @@
       position: absolute; top: 50%; transform: translateY(-50%);
       width: 52px; height: 52px; border-radius: 50%;
       background: rgba(255,255,255,.75); backdrop-filter: blur(6px);
-      border: 2px solid var(--border); color: var(--saffron-dark);
+      border: 2px solid var(--border); color: var(--blue-dark);
       font-size: 1.5rem; cursor: pointer;
       align-items: center; justify-content: center;
       transition: background .2s, transform .15s, opacity .2s;
@@ -190,7 +191,7 @@
       border: 1.5px solid var(--border);
       border-radius: 10px;
       background: var(--cream);
-      color: var(--saffron-dark);
+      color: var(--blue-dark);
       font-size: 1.1rem; font-weight: 700;
       cursor: pointer;
       touch-action: manipulation;
@@ -198,7 +199,7 @@
       display: flex; align-items: center; justify-content: center; gap: 6px;
       font-family: 'Hind Vadodara', sans-serif;
     }
-    .nav-btn-mobile:active  { background: #FFE0A0; }
+    .nav-btn-mobile:active  { background: #BBDEFB; }
     .nav-btn-mobile:disabled { opacity: .28; cursor: default; pointer-events: none; }
 
     #mobile-counter {
@@ -219,7 +220,7 @@
     #slide-counter { font-size: 1rem; color: var(--text-muted); font-weight: 500; min-width: 72px; text-align: center; }
     #dots-container { display: flex; gap: 8px; align-items: center; }
     .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); transition: background .25s, transform .25s; cursor: pointer; }
-    .dot.active { background: var(--saffron); transform: scale(1.4); }
+    .dot.active { background: var(--blue); transform: scale(1.4); }
 
     /* ── Hint bar ────────────────────────────────────────────── */
     #kb-hint {
@@ -316,8 +317,8 @@
 
   <header>
     <div>
-      <h1>ભાવનગર કેન્દ્રની માહિતી</h1>
-      <p class="sub">Bhavnagar Center — Session Notices</p>
+      <h1>ભાવનગર ત્રિમંદિર માહિતી</h1>
+      <p class="sub">Bhavnagar Trimandir — Session Notices</p>
     </div>
   </header>
   <div class="header-rule"></div>
