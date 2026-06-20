@@ -225,7 +225,7 @@
 
     // ── Config ────────────────────────────────────────────────
     const BASE       = "https://api.jsonbin.io/v3/b";
-    const POLL_MS    = 4000;   // poll every 4 seconds
+    const POLL_MS    = 10000;  // poll every 10 seconds (~3,000 req/month for 4 sessions)
     // Bin ID: from config.js, OR URL param ?bin=XXX, OR localStorage (for same device)
     const params     = new URLSearchParams(window.location.search);
     let   binId      = JSONBIN_BIN_ID || params.get("bin") || localStorage.getItem("satsang_bin_id") || "";
