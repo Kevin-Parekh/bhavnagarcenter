@@ -157,6 +157,35 @@
     }
     .btn-remove:hover, .btn-remove:active { color: var(--danger); background: #FDECEA; }
 
+    /* ── Mic button ──────────────────────────────────────────── */
+    .btn-mic {
+      background: none; border: 1.5px solid var(--border);
+      border-radius: 20px; cursor: pointer;
+      font-size: 1rem; padding: 3px 10px;
+      color: var(--text-muted);
+      display: flex; align-items: center; gap: 5px;
+      font-family: 'Hind Vadodara', sans-serif;
+      font-size: 0.78rem; font-weight: 600;
+      transition: all .2s; touch-action: manipulation;
+      white-space: nowrap;
+    }
+    .btn-mic:hover  { border-color: var(--saffron); color: var(--saffron-dark); }
+
+    /* Listening state — pulsing red */
+    .btn-mic.listening {
+      background: #FDECEA;
+      border-color: var(--danger);
+      color: var(--danger);
+      animation: micPulse 1.2s ease-in-out infinite;
+    }
+    @keyframes micPulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(192,57,43,.30); }
+      50%      { box-shadow: 0 0 0 6px rgba(192,57,43,.00); }
+    }
+
+    /* Interim (partial) transcript shown in lighter colour */
+    textarea.point-input.interim { color: #A08060; }
+
     textarea.point-input {
       width: 100%; min-height: 88px; border: none; outline: none;
       resize: vertical; font-family: 'Hind Vadodara', sans-serif;
@@ -387,14 +416,21 @@
 
       const card = document.createElement("div");
       card.className = "point-card";
+      const micHtml = hasSpeech
+        ? `<button class="btn-mic" onclick="toggleDictation(this)" title="ગુજરાતીમાં બોલો">🎤 બોલો</button>`
+        : "";
+
       card.innerHTML = `
         <div class="point-card-header">
           <span class="point-number">મુદ્દો ${idx}</span>
-          <button class="btn-remove" onclick="removePoint(this)" aria-label="Remove">✕</button>
+          <div style="display:flex;gap:6px;align-items:center">
+            ${micHtml}
+            <button class="btn-remove" onclick="removePoint(this)" aria-label="Remove">✕</button>
+          </div>
         </div>
         <textarea
           class="point-input"
-          placeholder="અહીં ગુજરાતીમાં સૂચના લખો…"
+          placeholder="અહીં ગુજરાતીમાં સૂચના લખો… અથવા 🎤 બોલો"
           rows="3"
           oninput="updateCharCount(this)"
           autocomplete="off" autocorrect="off" spellcheck="false"
@@ -563,6 +599,79 @@
     function escHtml(s) {
       return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
               .replace(/"/g,"&quot;");
+    }
+
+    // ── Speech-to-Text (Web Speech API, Gujarati) ────────────────
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const hasSpeech = !!SpeechRecognition;
+
+    let activeRec    = null;   // current recognition instance
+    let activeMicBtn = null;   // the button that started it
+
+    window.toggleDictation = function(micBtn) {
+      // If this button is already listening, stop it
+      if (micBtn.classList.contains("listening")) {
+        stopDictation(); return;
+      }
+      // If another card is listening, stop that first
+      if (activeRec) stopDictation();
+
+      const card = micBtn.closest(".point-card");
+      const ta   = card.querySelector("textarea.point-input");
+
+      const rec = new SpeechRecognition();
+      rec.lang            = "gu-IN";   // Gujarati (India)
+      rec.interimResults  = true;      // show partial results live
+      rec.continuous      = false;     // auto-stop after silence
+      rec.maxAlternatives = 1;
+
+      activeRec    = rec;
+      activeMicBtn = micBtn;
+      micBtn.classList.add("listening");
+      micBtn.innerHTML = "🔴 સાંભળે છે…";
+
+      // Snapshot text already in the box before dictation starts
+      let base = ta.value;
+      if (base && !base.endsWith(" ") && !base.endsWith("\n")) base += " ";
+
+      rec.onresult = e => {
+        let interim = "", final = "";
+        for (let i = e.resultIndex; i < e.results.length; i++) {
+          const t = e.results[i][0].transcript;
+          e.results[i].isFinal ? (final += t) : (interim += t);
+        }
+        // Show interim in lighter colour; confirmed text is normal
+        ta.value = base + final + interim;
+        ta.classList.toggle("interim", !!interim && !final);
+        if (final) base += final;   // lock in confirmed words
+        updateCharCount(ta);
+      };
+
+      rec.onerror = e => {
+        const msgs = {
+          "no-speech":       "⚠️ અવાજ ન સંભળાયો — ફરી try કરો",
+          "not-allowed":     "❌ Microphone permission આપો (browser settings)",
+          "network":         "❌ Network error — internet ચેક કરો",
+          "language-not-supported": "❌ Gujarati speech supported નથી",
+        };
+        showToast(msgs[e.error] || `❌ Error: ${e.error}`, "error");
+        stopDictation();
+      };
+
+      rec.onend = () => stopDictation();
+
+      rec.start();
+    };
+
+    function stopDictation() {
+      if (activeRec) { try { activeRec.stop(); } catch {} activeRec = null; }
+      if (activeMicBtn) {
+        activeMicBtn.classList.remove("listening");
+        activeMicBtn.innerHTML = "🎤 બોલો";
+        activeMicBtn = null;
+      }
+      // Remove interim styling from all textareas
+      document.querySelectorAll("textarea.interim").forEach(t => t.classList.remove("interim"));
     }
 
     // ── On load: fetch existing notices so admin can edit them ──
